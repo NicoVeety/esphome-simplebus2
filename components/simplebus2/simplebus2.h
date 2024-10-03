@@ -61,6 +61,9 @@ namespace esphome
       volatile int message_code = -1;
       volatile int message_addr;
 
+      int last_logged_message_code = -1;
+      int last_logged_message_addr = -1;
+
       HighFrequencyLoopRequester high_freq_;
       std::vector<uint16_t> temp_;
       std::vector<Simplebus2Listener *> listeners_{};

@@ -56,36 +56,36 @@ namespace esphome
       arg->pin_triggered = true;
     }
 
-    void Simplebus2Component::process_interrupt()
-    {
-      auto &s = this->store_;
-      unsigned long now = micros();
-      unsigned long pause_time = now - this->last_pause_time;
+void Simplebus2Component::process_interrupt()
+{
+    auto &s = this->store_;
+    unsigned long now = micros();
+    unsigned long pause_time = now - this->last_pause_time;
 
-      if (pause_time > 18000)
-      {
+    if (pause_time > 18000)
+    {
         this->message_started = false;
-      }
-      else if (pause_time >= 16000)
-      {
+    }
+    else if (pause_time >= 16000)
+    {
         this->message_started = true;
         this->message_position = 0;
-      }
+    }
 
-      if (this->message_started)
-      {
+    if (this->message_started)
+    {
         if (pause_time >= 2000 && pause_time <= 4900)
         {
-          this->message_bit_array[this->message_position++] = 0;
+            this->message_bit_array[this->message_position++] = 0;
         }
         else if (pause_time >= 5000 && pause_time <= 9000)
         {
-          this->message_bit_array[this->message_position++] = 1;
+            this->message_bit_array[this->message_position++] = 1;
         }
-      }
+    }
 
-      if (this->message_position == 18)
-      {
+    if (this->message_position == 18)
+    {
         this->message_started = false;
 
         unsigned int message_code = binary_to_int(0, 6, this->message_bit_array);
@@ -96,20 +96,29 @@ namespace esphome
 
         if (checksum == message_checksum)
         {
-          this->message_code = message_code;
-          this->message_addr = message_addr;
-          //ESP_LOGI(TAG, "Recived command %i, address %i", message_code, message_addr);
+            this->message_code = message_code;
+            this->message_addr = message_addr;
+
+            // Only log if the message code or address is different from the last logged one
+            if (this->message_code != this->last_logged_message_code || this->message_addr != this->last_logged_message_addr)
+            {
+                ESP_LOGI(TAG, "Received command %i, address %i", message_code, message_addr);
+                
+                // Update the last logged values
+                this->last_logged_message_code = this->message_code;
+                this->last_logged_message_addr = this->message_addr;
+            }
         }
         else
         {
-          ESP_LOGW(TAG, "Incorrect checksum");
-          this->message_code = -1;
+            ESP_LOGW(TAG, "Incorrect checksum");
+            this->message_code = -1;
         }
-      }
-
-      this->last_pause_time = now;
-      s.pin_triggered = false;
     }
+
+    this->last_pause_time = now;
+    s.pin_triggered = false;
+}
 
     void Simplebus2Component::register_listener(Simplebus2Listener *listener)
     {
