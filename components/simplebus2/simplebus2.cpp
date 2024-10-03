@@ -109,6 +109,7 @@ void Simplebus2Component::process_interrupt()
         else
         {
             ESP_LOGW(TAG, "Incorrect checksum");
+            ESP_LOGI(TAG, "C %i, A %i", message_code, message_addr);
             this->message_code = -1;
         }
     }
