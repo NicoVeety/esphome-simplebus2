@@ -99,12 +99,9 @@ void Simplebus2Component::process_interrupt()
             this->message_code = message_code;
             this->message_addr = message_addr;
 
-            // Only log if the message code or address is different from the last logged one
             if (this->message_code != this->last_logged_message_code || this->message_addr != this->last_logged_message_addr)
             {
                 ESP_LOGI(TAG, "Received command %i, address %i", message_code, message_addr);
-                
-                // Update the last logged values
                 this->last_logged_message_code = this->message_code;
                 this->last_logged_message_addr = this->message_addr;
             }
