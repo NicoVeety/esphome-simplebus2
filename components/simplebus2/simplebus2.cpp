@@ -65,6 +65,7 @@ namespace esphome
       if (pause_time > 18000)
       {
         this->message_started = false;
+        this->store_.log_message_fired = false;
       }
       else if (pause_time >= 16000)
       {
@@ -95,20 +96,30 @@ namespace esphome
         int checksum = __builtin_popcount(message_code) + __builtin_popcount(message_addr);
 
         if (checksum == message_checksum)
-        {
-          this->message_code = message_code;
-          this->message_addr = message_addr;
-        }
-        else
-        {
-          ESP_LOGW(TAG, "Incorrect checksum");
-          this->message_code = -1;
-        }
-      }
+    {
+      this->message_code = message_code;
+      this->message_addr = message_addr;
 
-      this->last_pause_time = now;
-      s.pin_triggered = false;
+      if (!this->store_.log_message_fired)
+      {
+        ESP_LOGI(TAG, "Recived command %i, address %i", message_code, message_addr);
+        this->store_.log_message_fired = true;
+      }
     }
+    else
+    {
+      ESP_LOGW(TAG, "Incorrect checksum");
+      this->message_code = -1;
+    }
+  }
+
+  this->last_pause_time = now;
+  s.pin_triggered = false;
+}
+
+  this->last_pause_time = now;
+  s.pin_triggered = false;
+}
 
     void Simplebus2Component::register_listener(Simplebus2Listener *listener)
     {
