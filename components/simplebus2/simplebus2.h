@@ -52,7 +52,6 @@ namespace esphome
     protected:
       InternalGPIOPin *rx_pin;
       InternalGPIOPin *tx_pin;
-      const char *event;
       Simplebus2ComponentStore store_;
 
       unsigned long last_pause_time = 0;

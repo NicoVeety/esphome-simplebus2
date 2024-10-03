@@ -80,14 +80,6 @@ binary_sensor:
     auto_off: 30s
 ```
 
-Configuration variables:
-------------------------
-- <a id="eventlist">**event**</a>  (_Optional_, string): The name of the event that will be generated on Home Assistant when receiving a command on the bus. For example, if  set to `simplebus2`, the event generated will be "esphome.simplebus2".
-Read more about how to use it in the [event section](#event)
-Default to `simplebus2`.
-If this parameter is set to `none` no event will be generated.
-
-
 Binary sensor
 ===================
 
@@ -126,37 +118,6 @@ Configuration example:
 
 	text_sensor:
 	  - platform: simplebus2
-
-Event
-========
-If the [event](#eventlist) parameter is not set to `none`, an event will be generated each time a command is received.
-
-You can intercept events in Home Assistant on the page "developer tools -> event"
-
-Each time a command is received, an event like this will be generated:
-
-	event_type: esphome.simplebus2
-	data:
-	  device_id: xxxxxxxxxxxxxxxxxxxxxxxxx
-	  address: "13"
-	  command: "50"
-	origin: LOCAL
-	time_fired: "2024-01-01T00:00:00.000000+00:00"
-	context:
-	  id: xxxxxxxxxxxxxxxxxxxxxxxx
-	  parent_id: null
-	  user_id: null
-
-To intercept this event to trigger an Home Assistant automation, you can use a trigger of type "event."
-
-The trigger configuration will look like this:
-
-	platform: event
-	event_type: esphome.simplebus2
-	event_data:
-	  command: "50"
-	  address: "13"
-You have to change the address and the name of the event you have chosen, if you have set a different one.
 
 Send a command
 ==================
