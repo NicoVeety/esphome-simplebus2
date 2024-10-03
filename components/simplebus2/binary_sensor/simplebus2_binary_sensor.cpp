@@ -9,38 +9,27 @@ namespace esphome
 
     void Simplebus2BinarySensor::trigger(uint16_t command, uint16_t address)
     {
-      ESP_LOGI(TAG, "Received command %d, address %d", command, address);
-      
       if (this->command == command && this->address == address)
       {
         this->publish_state(true);
 
-        if (this->auto_off > 0 && this->timer == 0)
+        if (this->auto_off > 0)
         {
-          ESP_LOGI(TAG, "Started timer for %d seconds", this->auto_off);
-          this->timer = millis();
+          ESP_LOGI(TAG, "Started timer");
+          this->timer = millis() + (this->auto_off * 1000);
         }
-      }
-      else
-      {
-        ESP_LOGI(TAG, "Command or address did not match. Ignoring.");
       }
     }
 
     void Simplebus2BinarySensor::loop()
     {
       uint32_t now_millis = millis();
-    
-      ESP_LOGI(TAG, "Loop is being called. Current time: %u, Timer: %u", now_millis, this->timer);
 
-      if (this->timer > 0)
+      if (this->timer > 0 && now_millis >= this->timer)
       {
-        if (now_millis - this->timer >= this->auto_off * 1000)
-        {
-          ESP_LOGI(TAG, "Timer ended, publishing state false");
-          this->publish_state(false);
-          this->timer = 0;
-        }
+        ESP_LOGI(TAG, "Timer ended");
+        this->publish_state(false);
+        this->timer = 0;
       }
     }
 
