@@ -11,8 +11,6 @@ namespace esphome
     {
       if (this->command == command && this->address == address)
       {
-        ESP_LOGD(TAG, "Binary sensor fired! %i %i", this->command, this->address);
-
         this->publish_state(true);
         if (this->auto_off > 0)
         {

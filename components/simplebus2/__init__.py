@@ -15,7 +15,6 @@ Simplebus2SendAction = simplebus2_ns.class_(
 CONF_SIMPLEBUS2_ID = "simplebus2"
 CONF_RX_PIN = "rx_pin"
 CONF_TX_PIN = "tx_pin"
-CONF_EVENT = "event"
 CONF_COMMAND = "command"
 CONF_ADDRESS = "address"
 MULTI_CONF = False
@@ -31,7 +30,6 @@ CONFIG_SCHEMA = cv.All(
                 cv.Range(max=TimePeriod(microseconds=2500)),
             ),
             cv.Optional(CONF_IDLE, default="10ms"): cv.positive_time_period_microseconds,
-            cv.Optional(CONF_EVENT, default="simplebus2"): cv.string,
         },
         cv.only_on([PLATFORM_ESP32]),
     )
