@@ -17,7 +17,6 @@ CONF_RX_PIN = "rx_pin"
 CONF_TX_PIN = "tx_pin"
 CONF_COMMAND = "command"
 CONF_ADDRESS = "address"
-MULTI_CONF = False
 
 CONFIG_SCHEMA = cv.All(
     cv.Schema(

@@ -40,11 +40,9 @@ namespace esphome
     {
     public:
       void setup() override;
-      void dump_config() override;
       void loop() override;
 
       void message_decode(std::vector<uint16_t> src);
-      void dump(std::vector<uint16_t>) const;
       void sending_loop();
       void register_listener(Simplebus2Listener *listener);
       void send_command(Simplebus2Data data);

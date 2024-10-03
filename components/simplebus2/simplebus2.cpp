@@ -34,11 +34,6 @@ namespace esphome
       ESP_LOGCONFIG(TAG, "Setup for Simplebus2 complete");
     }
 
-    void Simplebus2Component::dump_config()
-    {
-      ESP_LOGCONFIG(TAG, "Simplebus2:");
-    }
-
     void Simplebus2Component::loop()
     {
       for (auto &listener : listeners_)
