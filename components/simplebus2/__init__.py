@@ -13,6 +13,8 @@ Simplebus2SendAction = simplebus2_ns.class_(
 )
 
 CONF_SIMPLEBUS2_ID = "simplebus2"
+CONF_RX_PIN = "rx_pin"
+CONF_TX_PIN = "tx_pin"
 CONF_COMMAND = "command"
 CONF_ADDRESS = "address"
 
@@ -20,6 +22,8 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(Simplebus2),
+            cv.Optional(CONF_RX_PIN, default=2): pins.internal_gpio_input_pullup_pin_schema,
+            cv.Optional(CONF_TX_PIN, default=3): pins.internal_gpio_output_pin_schema,
             cv.Optional(CONF_FILTER, default="1000us"): cv.All(
                 cv.positive_time_period_microseconds,
                 cv.Range(max=TimePeriod(microseconds=2500)),
@@ -39,11 +43,12 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
 
-    rx_pin = cg.gpio_pin_expression(2)
+
+    rx_pin = await cg.gpio_pin_expression(config[CONF_RX_PIN])
     cg.add(var.set_rx_pin(rx_pin))
 
-    tx_pin = cg.gpio_pin_expression(3)
-    cg.add(var.set_tx_pin(tx_pin))
+    pin = await cg.gpio_pin_expression(config[CONF_TX_PIN])
+    cg.add(var.set_tx_pin(pin))
 
 
 
