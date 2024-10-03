@@ -30,7 +30,6 @@ namespace esphome
     {
       static void gpio_intr(Simplebus2ComponentStore *arg);
 
-      // If pin triggered
       volatile bool pin_triggered = false;
 
       ISRInternalGPIOPin rx_pin;
