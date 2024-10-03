@@ -12,7 +12,7 @@ namespace esphome
 
       std::string message = "{\"address\":" + std::to_string(address) + ", \"command\":" + std::to_string(command) + "}";
       this->publish_state(message);
-      ESP_LOGI(TAG, "Recived command %i, address %i", message_code, message_addr);
+      ESP_LOGI(TAG, "Recived command %i, address %i", command, address);
     }
 
   }
