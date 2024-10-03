@@ -18,8 +18,8 @@ namespace esphome
       const int rx_pin_number = 2;
       const int tx_pin_number = 3;
 
-      this->rx_pin = gpio::internal_gpio_pin(rx_pin_number, INPUT_PULLUP);
-      this->tx_pin = gpio::internal_gpio_pin(tx_pin_number, OUTPUT);
+      this->rx_pin = App.get_gpio_pin(rx_pin_number, INPUT_PULLUP);
+      this->tx_pin = App.get_gpio_pin(tx_pin_number, OUTPUT);
 
       this->rx_pin->setup();
       this->tx_pin->setup();
