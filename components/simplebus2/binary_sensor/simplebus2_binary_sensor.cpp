@@ -17,7 +17,6 @@ namespace esphome
       {
         this->publish_state(false);
       }
-      }
     }
   }
 }
