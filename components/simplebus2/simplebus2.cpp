@@ -65,6 +65,7 @@ namespace esphome
       if (pause_time > 18000)
       {
         this->message_started = false;
+        this->store_.log_message_fired = false;
       }
       else if (pause_time >= 16000)
       {
@@ -98,7 +99,12 @@ namespace esphome
         {
           this->message_code = message_code;
           this->message_addr = message_addr;
-          ESP_LOGI(TAG, "Recived command %i, address %i", message_code, message_addr);
+
+          if (!this->store_.log_message_fired)
+          {
+            ESP_LOGI(TAG, "Recived command %i, address %i", message_code, message_addr);
+            this->store_.log_message_fired = true;
+          }
         }
         else
         {
@@ -175,6 +181,12 @@ namespace esphome
       }
       return result;
     }
+
+    class Simplebus2ComponentStore {
+    public:
+      volatile bool pin_triggered = false;
+      bool log_message_fired = false;
+    };
 
   }
 }
