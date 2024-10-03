@@ -1,4 +1,11 @@
 # simplebus2ESPHome
+
+This is a special personilized Version of "se-bastiaan"'s "esphome-simplebus2" Project Based on the Hardware from "Elektroarzt".
+-I2C Potentiometers are removed and with it the Number Variable since i somehow killed mine and had to find a workaround Instead of U3 MCP4017 I hardwired a 4.7k resistor to D1 and GND and used the Bypass Connector (removed R11 and placed R1)
+-Fix Auto reset Timer for binary Sensor
+-Modify Logging
+-other (i may have forgotten)
+
 Own usage as an example:
 ```
 external_components:
