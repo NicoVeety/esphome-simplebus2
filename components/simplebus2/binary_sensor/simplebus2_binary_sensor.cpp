@@ -11,10 +11,12 @@ namespace esphome
     {
       if (this->command == command && this->address == address)
       {
+        ESP_LOGI(TAG, "Checking condition 1: command = %d, address = %d", this->command, this->address);
         this->publish_state(true);
       }
-      else if  (this->63 == command && this->255 == address)
+      else if  (this->command == 63 && this->address == 255)
       {
+        ESP_LOGI(TAG, "Checking condition 2: command = 63, address = 255");
         this->publish_state(false);
       }
     }
