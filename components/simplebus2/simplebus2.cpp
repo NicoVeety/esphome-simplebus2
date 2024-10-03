@@ -42,7 +42,7 @@ namespace esphome
 
       if (this->message_code > 0)
       {
-        ESP_LOGD(TAG, "Received command %i, address %i", this->message_code, this->message_addr);
+        ESP_LOGI(TAG, "Received command %i, address %i", this->message_code, this->message_addr);
         for (auto &listener : listeners_)
         {
           listener->trigger(this->message_code, this->message_addr);
@@ -101,7 +101,7 @@ namespace esphome
         }
         else
         {
-          ESP_LOGD(TAG, "Incorrect checksum");
+          ESP_LOGW(TAG, "Incorrect checksum");
           this->message_code = -1;
         }
       }
@@ -136,7 +136,7 @@ namespace esphome
 
     void Simplebus2Component::send_command(Simplebus2Data data)
     {
-      ESP_LOGD(TAG, "Sending command %i, address %i", data.command, data.address);
+      ESP_LOGI(TAG, "Send command %i, address %i", data.command, data.address);
 
       this->rx_pin->detach_interrupt();
 

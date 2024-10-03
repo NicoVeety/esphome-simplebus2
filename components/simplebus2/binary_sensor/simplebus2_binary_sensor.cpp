@@ -11,9 +11,11 @@ namespace esphome
     {
       if (this->command == command && this->address == address)
       {
+        ESP_LOGI(TAG, "Received command %i, address %i", this->command, this->address);
         this->publish_state(true);
         if (this->auto_off > 0)
         {
+          ESP_LOGI(TAG, "started timer");
           this->timer = millis() + (this->auto_off * 1000);
         }
       }
@@ -23,8 +25,9 @@ namespace esphome
     {
       uint32_t now_millis = millis();
 
-      if (this->timer && now_millis > this->timer)
+      if (this->timer && now_millis >= this->timer)
       {
+        ESP_LOGI(TAG, "timer ended");
         this->publish_state(false);
         this->timer = 0;
       }
