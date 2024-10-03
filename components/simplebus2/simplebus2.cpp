@@ -5,10 +5,6 @@
 #include <Arduino.h>
 #include <Wire.h>
 
-#define MCP4017_MAX_RESISTANCE 100000
-#define MCP4017_I2C_ADDRESS 0x2F
-#define I2C_FREQ 100000
-#define OPV_FIXED_GAIN_RESISTOR 100000
 
 namespace esphome
 {
@@ -27,9 +23,6 @@ namespace esphome
       ledcSetup(0, 25000, 8);
       ledcAttachPin(this->tx_pin->get_pin(), 0);
 
-      set_opv_gain(this->gain);
-      set_comparator_voltage_limit(this->voltage_level);
-
       auto &s = this->store_;
 
       this->high_freq_.start();
@@ -44,18 +37,6 @@ namespace esphome
     void Simplebus2Component::dump_config()
     {
       ESP_LOGCONFIG(TAG, "Simplebus2:");
-      LOG_PIN("  Pin RX: ", this->rx_pin);
-      LOG_PIN("  Pin TX: ", this->tx_pin);
-      ESP_LOGCONFIG(TAG, "  Voltage level: %i", this->voltage_level);
-      ESP_LOGCONFIG(TAG, "  Gain: %i", this->gain);
-      if (strcmp(this->event, "esphome.none") != 0)
-      {
-        ESP_LOGCONFIG(TAG, "  Event: %s", this->event);
-      }
-      else
-      {
-        ESP_LOGCONFIG(TAG, "  Event: disabled");
-      }
     }
 
     void Simplebus2Component::loop()
@@ -73,13 +54,6 @@ namespace esphome
       if (this->message_code > 0)
       {
         ESP_LOGD(TAG, "Received command %i, address %i", this->message_code, this->message_addr);
-
-        if (strcmp(this->event, "esphome.none") != 0)
-        {
-          ESP_LOGD(TAG, "Send event to home assistant on %s", this->event);
-          auto capi = new esphome::api::CustomAPIDevice();
-          capi->fire_homeassistant_event(this->event, {{"command", std::to_string(id(this->message_code))}, {"address", std::to_string(id(this->message_addr))}});
-        }
         for (auto &listener : listeners_)
         {
           listener->trigger(this->message_code, this->message_addr);
@@ -91,7 +65,6 @@ namespace esphome
 
     void IRAM_ATTR HOT Simplebus2ComponentStore::gpio_intr(Simplebus2ComponentStore *arg)
     {
-      ESP_LOGD(TAG, "gpio_intr");
       if (!arg->pin_triggered)
       {
         arg->pin_triggered = true;
@@ -229,65 +202,6 @@ namespace esphome
       send_pwm();
 
       this->rx_pin->attach_interrupt(Simplebus2ComponentStore::gpio_intr, &this->store_, gpio::INTERRUPT_RISING_EDGE);
-    }
-
-    void Simplebus2Component::set_pot_resistance(boolean isGain, float resistance)
-    {
-      if (resistance < 0 || resistance > MCP4017_MAX_RESISTANCE)
-      {
-        return;
-      }
-
-      // pins for gain
-      int sdaPin = 6;
-      int sclPin = 7;
-      if (!isGain)
-      {
-        // pins for voltage comparator
-        sdaPin = 9;
-        sclPin = 10;
-      }
-
-      int value = round((float((resistance - 325.0) / float(MCP4017_MAX_RESISTANCE)) * 100.0) * 127.0);
-
-      // Reset sequence for the MCP4017
-      Wire.begin(sdaPin, sclPin, I2C_FREQ);
-      Wire.beginTransmission(0b111111111);
-      Wire.endTransmission();
-
-      ESP_LOGD(TAG, "Write value of MCP4017 %s: %i", (isGain ? "gain" : "volt."), value);
-
-      Wire.beginTransmission(MCP4017_I2C_ADDRESS);
-      Wire.write(value);
-      Wire.endTransmission();
-      Wire.end();
-    }
-
-    // Set gain factor of the OPV
-    void Simplebus2Component::set_opv_gain(int gain)
-    {
-      ESP_LOGD(TAG, "Gain to set: %i", gain);
-      // Gain = 1+(R2/R1)
-      if (gain < 2)
-      {
-        return;
-      }
-      float resistorValue = float(OPV_FIXED_GAIN_RESISTOR) / (gain - 1);
-      ESP_LOGD(TAG, "Gain resistor value: %f", resistorValue);
-      set_pot_resistance(true, resistorValue);
-    }
-
-    // Set ref voltage of the comparator in [mV]
-    void Simplebus2Component::set_comparator_voltage_limit(int voltage)
-    {
-      ESP_LOGD(TAG, "Voltage to set: %i", voltage);
-      if (voltage < 100 || voltage > 1500)
-      {
-        return;
-      }
-      float resistorValue = (float(voltage) * float(OPV_FIXED_GAIN_RESISTOR)) / (3300.0 - float(voltage));
-      ESP_LOGD(TAG, "Voltage limit resistor value: %f", resistorValue);
-      set_pot_resistance(false, resistorValue);
     }
 
     void Simplebus2Component::int_to_binary(unsigned int input, int start_pos, int no_of_bits, int *bits)

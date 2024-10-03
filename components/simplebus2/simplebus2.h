@@ -51,20 +51,10 @@ namespace esphome
 
       void set_rx_pin(InternalGPIOPin *pin) { this->rx_pin = pin; }
       void set_tx_pin(InternalGPIOPin *pin) { this->tx_pin = pin; }
-      void set_gain(int gain) { this->gain = gain; }
-      void set_voltage_level(int voltage_level) { this->voltage_level = voltage_level; }
-      int get_gain() { return this->gain; }
-      int get_voltage_level() { return this->voltage_level; }
-      void set_event(const char *event) { this->event = event; }
-
-      void set_opv_gain(int gain);
-      void set_comparator_voltage_limit(int voltage);
 
     protected:
       InternalGPIOPin *rx_pin;
       InternalGPIOPin *tx_pin;
-      int voltage_level;
-      int gain;
       const char *event;
       Simplebus2ComponentStore store_;
 
@@ -79,7 +69,6 @@ namespace esphome
       std::vector<uint16_t> temp_;
       std::vector<Simplebus2Listener *> listeners_{};
 
-      void set_pot_resistance(bool isGain, float resistance);
       void activate_interrupt(bool activate);
 
       void process_interrupt();

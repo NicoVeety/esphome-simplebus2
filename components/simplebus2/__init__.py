@@ -13,8 +13,6 @@ Simplebus2SendAction = simplebus2_ns.class_(
 )
 
 CONF_SIMPLEBUS2_ID = "simplebus2"
-CONF_GAIN = "gain"
-CONF_VOLTAGE_LEVEL = "voltage_level"
 CONF_RX_PIN = "rx_pin"
 CONF_TX_PIN = "tx_pin"
 CONF_EVENT = "event"
@@ -26,10 +24,6 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(Simplebus2),
-            cv.Optional(CONF_GAIN, default=20): cv.int_,
-            cv.Optional(CONF_VOLTAGE_LEVEL, default=600): cv.All(
-                cv.int_, cv.Range(min=100, max=1500)
-            ),
             cv.Optional(CONF_RX_PIN, default=2): pins.internal_gpio_input_pullup_pin_schema,
             cv.Optional(CONF_TX_PIN, default=3): pins.internal_gpio_output_pin_schema,
             cv.Optional(CONF_FILTER, default="1000us"): cv.All(
@@ -58,9 +52,6 @@ async def to_code(config):
     pin = await cg.gpio_pin_expression(config[CONF_TX_PIN])
     cg.add(var.set_tx_pin(pin))
 
-    cg.add(var.set_gain(config[CONF_GAIN]))
-    cg.add(var.set_voltage_level(config[CONF_VOLTAGE_LEVEL]))
-    cg.add(var.set_event("esphome." + config[CONF_EVENT]))
 
 
 SIMPLEBUS2_SEND_SCHEMA = cv.Schema(

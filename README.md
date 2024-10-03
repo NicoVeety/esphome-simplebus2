@@ -2,7 +2,7 @@
 Own usage as an example:
 ```
 external_components:
-  - source: github://se-bastiaan/esphome-simplebus2
+  - source: github://nicoveety/esphome-simplebus2
 
 simplebus2:
 
