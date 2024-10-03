@@ -15,6 +15,12 @@ namespace esphome
     {
       ESP_LOGCONFIG(TAG, "Setting up Simplebus2");
 
+      const int rx_pin_number = 2;
+      const int tx_pin_number = 3;
+
+      this->rx_pin = new InternalGPIOPin(rx_pin_number, INPUT_PULLUP);
+      this->tx_pin = new InternalGPIOPin(tx_pin_number, OUTPUT);
+
       this->rx_pin->setup();
       this->tx_pin->setup();
 

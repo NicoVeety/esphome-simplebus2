@@ -4,7 +4,7 @@ from esphome import pins, automation
 from esphome.const import CONF_ID, CONF_FILTER, CONF_IDLE, PLATFORM_ESP32
 from esphome.core import coroutine_with_priority, TimePeriod
 
-CODEOWNERS = ["@se-bastiaan"]
+CODEOWNERS = ["@nicoveety"]
 simplebus2_ns = cg.esphome_ns.namespace("simplebus2")
 Simplebus2 = simplebus2_ns.class_("Simplebus2Component", cg.Component)
 
@@ -13,8 +13,6 @@ Simplebus2SendAction = simplebus2_ns.class_(
 )
 
 CONF_SIMPLEBUS2_ID = "simplebus2"
-CONF_RX_PIN = "rx_pin"
-CONF_TX_PIN = "tx_pin"
 CONF_COMMAND = "command"
 CONF_ADDRESS = "address"
 
@@ -22,8 +20,6 @@ CONFIG_SCHEMA = cv.All(
     cv.Schema(
         {
             cv.GenerateID(): cv.declare_id(Simplebus2),
-            cv.Optional(CONF_RX_PIN, default=2): pins.internal_gpio_input_pullup_pin_schema,
-            cv.Optional(CONF_TX_PIN, default=3): pins.internal_gpio_output_pin_schema,
             cv.Optional(CONF_FILTER, default="1000us"): cv.All(
                 cv.positive_time_period_microseconds,
                 cv.Range(max=TimePeriod(microseconds=2500)),
@@ -42,15 +38,6 @@ async def to_code(config):
     
     var = cg.new_Pvariable(config[CONF_ID])
     await cg.register_component(var, config)
-
-
-    rx_pin = await cg.gpio_pin_expression(config[CONF_RX_PIN])
-    cg.add(var.set_rx_pin(rx_pin))
-
-    pin = await cg.gpio_pin_expression(config[CONF_TX_PIN])
-    cg.add(var.set_tx_pin(pin))
-
-
 
 SIMPLEBUS2_SEND_SCHEMA = cv.Schema(
     {
