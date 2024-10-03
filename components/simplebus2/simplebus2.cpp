@@ -98,7 +98,6 @@ namespace esphome
         {
           this->message_code = message_code;
           this->message_addr = message_addr;
-          ESP_LOGI(TAG, "Recived command %i, address %i", message_code, message_addr);
         }
         else
         {
