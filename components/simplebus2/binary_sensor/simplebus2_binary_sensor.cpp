@@ -13,25 +13,11 @@ namespace esphome
       {
         this->publish_state(true);
 
-        if (this->auto_off > 0)
-        {
-          ESP_LOGI(TAG, "Started timer");
-          this->timer = millis() + (this->auto_off * 1000);
-        }
-      }
-    }
-
-    void Simplebus2BinarySensor::loop()
-    {
-      uint32_t now_millis = millis();
-
-      if (this->timer > 0 && now_millis >= this->timer)
+      else if  (this->command == 55 && this->address == 255)
       {
-        ESP_LOGI(TAG, "Timer ended");
         this->publish_state(false);
-        this->timer = 0;
+      }
       }
     }
-
   }
 }

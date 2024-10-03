@@ -13,16 +13,12 @@ namespace esphome
     {
     public:
       void trigger(uint16_t command, uint16_t address) override;
-      void loop();
       void set_command(uint16_t command) { this->command = command; }
-      void set_address(uint16_t address) { this->address = address; }
-      void set_auto_off(uint16_t auto_off) { this->auto_off = auto_off; }    
+      void set_address(uint16_t address) { this->address = address; } 
       
     protected:
-      uint32_t timer = 0;
       uint16_t address = 0;
       uint16_t command = 0;
-      uint16_t auto_off = 0;
     };
 
   }
