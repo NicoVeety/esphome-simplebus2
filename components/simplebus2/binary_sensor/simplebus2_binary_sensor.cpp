@@ -7,43 +7,30 @@ namespace esphome
 
     static const char *const TAG = "simplebus2.binary";
 
-    class Simplebus2BinarySensor : public PollingComponent, public BinarySensor
+    void Simplebus2BinarySensor::trigger(u_int16_t command, u_int16_t address)
     {
-    public:
-      uint32_t timer{0};
-      uint16_t command;
-      uint16_t address;
-      uint16_t auto_off;
-
-      Simplebus2BinarySensor() : PollingComponent(1000)
+      if (this->command == command && this->address == address)
       {
-      }
-
-      void trigger(uint16_t command, uint16_t address)
-      {
-        if (this->command == command && this->address == address)
+        this->publish_state(true);
+        if (this->auto_off > 0)
         {
-          this->publish_state(true);
-          if (this->auto_off > 0)
-          {
-            ESP_LOGI(TAG, "Started timer for auto_off: %d seconds", this->auto_off);
-            this->timer = static_cast<uint32_t>(millis() + (this->auto_off * 1000));
-          }
+          ESP_LOGI(TAG, "started timer");
+          this->timer = millis() + (this->auto_off * 1000);
         }
       }
-      void loop() override
-      {
-        uint32_t now_millis = millis();
-        ESP_LOGI(TAG, "now_millis: %u, timer: %u", now_millis, this->timer);
+    }
 
-        if (this->timer && now_millis >= this->timer)
-        {
-          ESP_LOGI(TAG, "Timer ended");
-          this->publish_state(false);
-          this->timer = 0;
-        }
+    void Simplebus2BinarySensor::loop()
+    {
+      uint32_t now_millis = millis();
+
+      if (this->timer && now_millis >= this->timer)
+      {
+        ESP_LOGI(TAG, "timer ended");
+        this->publish_state(false);
+        this->timer = 0;
       }
-    };
+    }
 
   }
 }
