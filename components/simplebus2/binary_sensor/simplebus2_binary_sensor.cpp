@@ -12,7 +12,7 @@ namespace esphome
       if (this->command == command && this->address == address)
       {
         this->publish_state(true);
-
+      }
       else if  (this->command == 55 && this->address == 255)
       {
         this->publish_state(false);
