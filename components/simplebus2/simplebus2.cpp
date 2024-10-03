@@ -181,12 +181,5 @@ namespace esphome
       }
       return result;
     }
-
-    class Simplebus2ComponentStore {
-    public:
-      volatile bool pin_triggered = false;
-      bool log_message_fired = false;
-    };
-
   }
 }
