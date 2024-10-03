@@ -2,6 +2,7 @@
 #include "esphome/core/log.h"
 #include "esphome/components/api/custom_api_device.h"
 #include "esphome/core/application.h"
+#include <Arduino.h>
 
 namespace esphome
 {
